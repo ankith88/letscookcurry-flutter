@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "365487480731",
+    "project_id": "letscookcurry",
+    "storage_bucket": "letscookcurry.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:365487480731:android:99c21da61677af347f8b3e",
+        "android_client_info": {
+          "package_name": "com.letscookcurry.letscookcurry"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "365487480731-goqms4kjjluc4ouvb4b1vtbf5pk3fb51.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB4HKyJqrfGvrcqoGYyvaawiMeNvxseJ9o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "365487480731-goqms4kjjluc4ouvb4b1vtbf5pk3fb51.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "365487480731-01pe49ndq14vj9kjefgbu8au7511ftt9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.letscookcurry.letscookcurry"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
