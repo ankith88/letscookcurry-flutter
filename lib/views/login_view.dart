@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../components/form_error.dart';
@@ -15,6 +16,11 @@ class _LoginViewState extends State<LoginView> {
   final _formKey = GlobalKey<FormState>();
 
   final List<String?> errors = [];
+
+  Future<FirebaseApp> _initializeFirebase() async {
+    FirebaseApp firebaseApp = await Firebase.initializeApp();
+    return firebaseApp;
+  }
 
   void _addError({String? error}) {
     if (!errors.contains(error))
@@ -68,28 +74,6 @@ class _LoginViewState extends State<LoginView> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        backgroundColor: kPrimaryColor,
-        // leading: Row(
-        //   children: [
-        //     IconButton(
-        //         onPressed: () {},
-        //         icon: const Icon(
-        //           Icons.chevron_left_outlined,
-        //           color: Colors.white,
-        //           semanticLabel: 'Back',
-        //         )),
-        //   ],
-        // ),
-        title: const Text(
-          'Login',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        // backgroundColor: kPrimaryTextColor,
-      ),
       body: SingleChildScrollView(
         child: Form(
             key: _formKey,
@@ -207,11 +191,18 @@ class _LoginViewState extends State<LoginView> {
                               animationDuration: Duration(seconds: 5),
                               backgroundColor: kPrimaryColor,
                             ),
-                            onPressed: () {
+                            onPressed: () async {
                               if (_formKey.currentState!.validate()) {
-                                // If the form is valid, display a snackbar. In the real world,
-                                // you'd often call a server or save the information in a database.
-                                _loginUser(context);
+                                try {
+                                  Navigator.of(context).pushNamedAndRemoveUntil(
+                                      '/home', (route) => false);
+                                } on FirebaseAuthException catch (e) {
+                                  showDialog(
+                                      context: context,
+                                      builder: (ctx) => AlertDialog(
+                                          title: const Text('Invalid Login'),
+                                          content: Text('${e.message}')));
+                                }
                               }
                             },
                             child: Text(

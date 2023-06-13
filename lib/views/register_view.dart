@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:letscookcurry/constants.dart';
@@ -19,7 +20,8 @@ class _RegisterViewState extends State<RegisterView> {
 
   final _formKey = GlobalKey<FormState>();
 
-  final _auth = FirebaseAuth.instance;
+  // final _auth = FirebaseAuth.instance;
+  final firestoreInstance = FirebaseFirestore.instance;
 
   final Map<String, String> _authData = {
     'firstname': '',
@@ -49,27 +51,6 @@ class _RegisterViewState extends State<RegisterView> {
     return Scaffold(
         // backgroundColor: kPrimaryColor,
         resizeToAvoidBottomInset: false,
-        appBar: AppBar(
-          title: const Text('Register',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              )),
-          leading: Row(
-            children: [
-              IconButton(
-                  onPressed: () {
-                    Navigator.of(context)
-                        .pushNamedAndRemoveUntil('/login', (route) => false);
-                  },
-                  icon: const Icon(
-                    Icons.chevron_left_outlined,
-                    color: Colors.white,
-                    semanticLabel: 'Back',
-                  )),
-            ],
-          ),
-        ),
         body: SingleChildScrollView(
             child: Container(
           height: MediaQuery.of(context).size.height * 1,
@@ -267,6 +248,7 @@ class _RegisterViewState extends State<RegisterView> {
                           } else if (value.length < 8) {
                             return kShortPassError;
                           }
+                          return null;
                         },
                         decoration: InputDecoration(
                           // labelText: "Email",
@@ -297,25 +279,46 @@ class _RegisterViewState extends State<RegisterView> {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.only(
-                      top: 20, left: 20, right: 20, bottom: 15),
+                  padding:
+                      EdgeInsets.only(top: 10, left: 20, right: 20, bottom: 0),
                   child: SizedBox(
                     width: double.infinity,
-                    height: (50 / 812.0) * MediaQuery.of(context).size.height,
+                    height: (40 / 812.0) * MediaQuery.of(context).size.height,
                     child: TextButton(
                       style: TextButton.styleFrom(
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20)),
                         primary: Colors.white,
                         elevation: 6,
-                        animationDuration: const Duration(seconds: 5),
+                        animationDuration: Duration(seconds: 5),
                         backgroundColor: kPrimaryColor,
                       ),
-                      onPressed: () {
+                      onPressed: () async {
                         if (_formKey.currentState!.validate()) {
-                          // If the form is valid, display a snackbar. In the real world,
-                          // you'd often call a server or save the information in a database.
-                          // _loginUser(context);
+                          try {
+                            UserCredential user = await FirebaseAuth.instance
+                                .createUserWithEmailAndPassword(
+                                    email: emailController.text,
+                                    password: passwordController.text);
+                            firestoreInstance
+                                .collection("users")
+                                .doc(user.user?.uid)
+                                .set({
+                              "firstname": firstNameController.text,
+                              "lastname": lastNameController.text,
+                              "mobile": mobileNumberController.text,
+                              "email": emailController.text
+                            }).then((value) {
+                              Navigator.of(context).pushNamedAndRemoveUntil(
+                                  '/home', (route) => false);
+                            });
+                          } on FirebaseAuthException catch (e) {
+                            showDialog(
+                                context: context,
+                                builder: (ctx) => AlertDialog(
+                                    title: Text(' Ops! Registration Failed'),
+                                    content: Text('${e.message}')));
+                          }
                         }
                       },
                       child: Text(
@@ -331,32 +334,15 @@ class _RegisterViewState extends State<RegisterView> {
                   ),
                 ),
                 TextButton(
-                  onPressed: () async {
-                    final email = emailController.text;
-                    final password = passwordController.text;
-
-                    try {
-                      final userCredential = await FirebaseAuth.instance
-                          .createUserWithEmailAndPassword(
-                              email: email, password: password);
-                      print(userCredential);
-                    } on FirebaseAuthException catch (e) {
-                      switch (e.code) {
-                        case 'email-already-in-use':
-                          return print('Email already in use');
-                        case 'invalid-email':
-                          return print('Invalid Email');
-                      }
-                    }
-                  },
-                  child: const Text('Register'),
-                ),
-                TextButton(
                     onPressed: () {
                       Navigator.of(context)
                           .pushNamedAndRemoveUntil('/login', (route) => false);
                     },
-                    child: const Text('Login'))
+                    child: const Text('Already have an account? Login',
+                        style: TextStyle(
+                          color: kSecondaryButtonColor,
+                          fontWeight: FontWeight.normal,
+                        )))
               ],
             ),
           ),
