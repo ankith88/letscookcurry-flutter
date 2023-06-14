@@ -221,7 +221,7 @@ class _LoginViewState extends State<LoginView> {
                                     ScaffoldMessenger.of(context)
                                         .showSnackBar(snackBar);
 
-                                    // print('Move to Verify Email Screen');
+                                      // print('Move to Verify Email Screen');
                                     // Navigator.of(context)
                                     //     .pushNamedAndRemoveUntil(
                                     //         '/verify', (route) => false);
