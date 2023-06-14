@@ -17,8 +17,8 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   void initState() {
-    final User? user = _auth.currentUser;
-    _currentUser = user!;
+    _currentUser = _auth.currentUser!;
+    // _currentUser = user!;
     print(_currentUser.uid);
     // _getUserDetails();
     super.initState();

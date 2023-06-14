@@ -7,6 +7,7 @@ import 'package:letscookcurry/theme.dart';
 import 'package:letscookcurry/views/home_view.dart';
 import 'package:letscookcurry/views/register_view.dart';
 import 'package:letscookcurry/views/splash_view.dart';
+import 'package:letscookcurry/views/verify_email_view.dart';
 
 import 'firebase_options.dart';
 import 'views/login_view.dart';
@@ -57,6 +58,7 @@ class _MyAppState extends State<MyApp> {
       routes: {
         '/login': (context) => const LoginView(),
         '/register': (context) => const RegisterView(),
+        '/verify': (context) => const VerifyEmailView(),
         '/home': (context) => const HomeView(),
         '/splash': (context) => const SplashView(),
       },
@@ -88,30 +90,6 @@ class HomePageView extends StatelessWidget {
             return const Text('Loading...');
         }
       },
-    );
-  }
-}
-
-class VerifyEmailView extends StatefulWidget {
-  const VerifyEmailView({super.key});
-
-  @override
-  State<VerifyEmailView> createState() => _VerifyEmailViewState();
-}
-
-class _VerifyEmailViewState extends State<VerifyEmailView> {
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text('Please verify your email address'),
-        TextButton(
-            onPressed: () async {
-              final user = FirebaseAuth.instance.currentUser;
-              await user?.sendEmailVerification();
-            },
-            child: Text('Send Verification Email'))
-      ],
     );
   }
 }

@@ -83,15 +83,18 @@ class _LoginViewState extends State<LoginView> {
                 child: Column(children: <Widget>[
                   Image.asset(
                     "assets/images/lcc_logo.png",
-                    height: (200 / 812.0) * MediaQuery.of(context).size.height,
-                    width: (200 / 812.0) * MediaQuery.of(context).size.width,
+                    height: (300 / 812.0) * MediaQuery.of(context).size.height,
+                    width: (300 / 812.0) * MediaQuery.of(context).size.width,
                   ),
                   Column(
                     children: [
                       Container(
-                        padding: const EdgeInsets.all(20),
+                        padding: const EdgeInsets.only(
+                            top: 0, left: 20, right: 20, bottom: 10),
                         child: TextFormField(
                           controller: _email,
+                          enableSuggestions: false,
+                          autocorrect: false,
                           keyboardType: TextInputType.emailAddress,
                           validator: (value) {
                             if (value!.isEmpty) {
@@ -194,8 +197,22 @@ class _LoginViewState extends State<LoginView> {
                             onPressed: () async {
                               if (_formKey.currentState!.validate()) {
                                 try {
-                                  Navigator.of(context).pushNamedAndRemoveUntil(
-                                      '/home', (route) => false);
+                                  final userCredential = await FirebaseAuth
+                                      .instance
+                                      .signInWithEmailAndPassword(
+                                          email: _email.text,
+                                          password: _password.text);
+                                  print(userCredential);
+                                  if (userCredential.user!.emailVerified) {
+                                    Navigator.of(context)
+                                        .pushNamedAndRemoveUntil(
+                                            '/home', (route) => false);
+                                  } else {
+                                    print('Move to Verify Email Screen');
+                                    Navigator.of(context)
+                                        .pushNamedAndRemoveUntil(
+                                            '/verify', (route) => false);
+                                  }
                                 } on FirebaseAuthException catch (e) {
                                   showDialog(
                                       context: context,
