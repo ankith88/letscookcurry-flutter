@@ -208,10 +208,23 @@ class _LoginViewState extends State<LoginView> {
                                         .pushNamedAndRemoveUntil(
                                             '/home', (route) => false);
                                   } else {
-                                    print('Move to Verify Email Screen');
-                                    Navigator.of(context)
-                                        .pushNamedAndRemoveUntil(
-                                            '/verify', (route) => false);
+                                    final user =
+                                        FirebaseAuth.instance.currentUser;
+                                    await user?.sendEmailVerification();
+
+                                    await FirebaseAuth.instance.signOut();
+
+                                    final snackBar = SnackBar(
+                                        content: Text(
+                                            'Verification Email has been sent.'));
+
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(snackBar);
+
+                                    // print('Move to Verify Email Screen');
+                                    // Navigator.of(context)
+                                    //     .pushNamedAndRemoveUntil(
+                                    //         '/verify', (route) => false);
                                   }
                                 } on FirebaseAuthException catch (e) {
                                   showDialog(
