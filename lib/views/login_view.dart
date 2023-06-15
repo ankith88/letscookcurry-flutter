@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import '../components/form_error.dart';
 import '../constants.dart';
 
@@ -149,7 +150,7 @@ class _LoginViewState extends State<LoginView> {
                             } else if (emailValidatorRegExp.hasMatch(value)) {
                               _removeError(error: kMatchPassError);
                             }
-                            return null;
+                            return;
                           },
                           decoration: InputDecoration(
                             // labelText: "Email",
@@ -179,7 +180,7 @@ class _LoginViewState extends State<LoginView> {
                               top: 10, left: 20, right: 20, bottom: 10),
                           child: FormError(errors: errors)),
                       Container(
-                        padding: EdgeInsets.only(
+                        padding: const EdgeInsets.only(
                             top: 20, left: 20, right: 20, bottom: 15),
                         child: SizedBox(
                           width: double.infinity,
@@ -214,17 +215,15 @@ class _LoginViewState extends State<LoginView> {
 
                                     await FirebaseAuth.instance.signOut();
 
-                                    final snackBar = SnackBar(
-                                        content: Text(
-                                            'Verification Email has been sent.'));
-
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(snackBar);
-
-                                      // print('Move to Verify Email Screen');
-                                    // Navigator.of(context)
-                                    //     .pushNamedAndRemoveUntil(
-                                    //         '/verify', (route) => false);
+                                    Fluttertoast.showToast(
+                                        msg:
+                                            'Verification Email has been sent.',
+                                        toastLength: Toast.LENGTH_SHORT,
+                                        gravity: ToastGravity.CENTER,
+                                        timeInSecForIosWeb: 2,
+                                        backgroundColor: kPrimaryColor,
+                                        textColor: Colors.white,
+                                        fontSize: 16.0);
                                   }
                                 } on FirebaseAuthException catch (e) {
                                   showDialog(
@@ -256,9 +255,9 @@ class _LoginViewState extends State<LoginView> {
                               (50 / 812.0) * MediaQuery.of(context).size.height,
                           child: TextButton(
                             style: TextButton.styleFrom(
+                              foregroundColor: kPrimaryTextColor,
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20)),
-                              primary: kPrimaryTextColor,
                               elevation: 6,
                               animationDuration: const Duration(seconds: 5),
                               backgroundColor: kSecondaryButtonColor,

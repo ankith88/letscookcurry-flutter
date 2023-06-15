@@ -45,6 +45,8 @@ dependencies:
   shadowed_image: ^1.0.3
   animated_splash_screen: ^1.3.0
   page_transition: ^2.0.9
+  fluttertoast: ^8.2.2
+  google_nav_bar: ^5.0.6
 
 dev_dependencies:
   flutter_test:
