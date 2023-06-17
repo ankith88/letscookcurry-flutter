@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../components/form_error.dart';
+import '../components/google_sign_in_button.dart';
 import '../constants.dart';
+import '../model/authentication.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({Key? key}) : super(key: key);
@@ -84,8 +86,8 @@ class _LoginViewState extends State<LoginView> {
                 child: Column(children: <Widget>[
                   Image.asset(
                     "assets/images/lcc_logo.png",
-                    height: (300 / 812.0) * MediaQuery.of(context).size.height,
-                    width: (300 / 812.0) * MediaQuery.of(context).size.width,
+                    height: (150 / 812.0) * MediaQuery.of(context).size.height,
+                    width: (150 / 812.0) * MediaQuery.of(context).size.width,
                   ),
                   Column(
                     children: [
@@ -277,6 +279,43 @@ class _LoginViewState extends State<LoginView> {
                             ),
                           ),
                         ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.only(
+                            top: 20, left: 20, right: 20, bottom: 15),
+                        child: SizedBox(
+                          width: double.infinity,
+                          height:
+                              (50 / 812.0) * MediaQuery.of(context).size.height,
+                          child: Center(
+                            child: Text(
+                              '- OR -',
+                              style: TextStyle(
+                                fontSize: (15 / 812.0) *
+                                    MediaQuery.of(context).size.height,
+                                // fontWeight: FontWeight.bold,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      FutureBuilder(
+                        future:
+                            Authentication.initializeFirebase(context: context),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) {
+                            return Text('Error initializing Firebase');
+                          } else if (snapshot.connectionState ==
+                              ConnectionState.done) {
+                            return GoogleSignInButton();
+                          }
+                          return CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              kPrimaryColor,
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),
