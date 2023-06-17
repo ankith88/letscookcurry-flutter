@@ -3,11 +3,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:letscookcurry/constants.dart';
+import 'package:letscookcurry/views/category_view.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
-  
 
   @override
   State<HomeView> createState() => _HomeViewState();
@@ -15,15 +16,16 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   late User _currentUser;
+  late GoogleSignInAccount googleUser;
   final _auth = FirebaseAuth.instance;
   final firestoreInstance = FirebaseFirestore.instance;
 
   @override
   void initState() {
     _currentUser = _auth.currentUser!;
-    // _currentUser = user!;
+
     print(_currentUser.uid);
-    // _getUserDetails();
+
     super.initState();
   }
 
@@ -110,6 +112,7 @@ class _HomeViewState extends State<HomeView> {
                             fontSize: 10)),
                   ],
                 ),
+                CategoryView()
               ],
             ),
           ),
