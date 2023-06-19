@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:letscookcurry/components/dish_card.dart';
 import 'package:letscookcurry/constants.dart';
 import 'package:letscookcurry/views/category_view.dart';
+import 'package:letscookcurry/views/dishes_view.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -57,6 +59,7 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           title: const Text("Let Cook Curry"),
           actions: <Widget>[
@@ -93,6 +96,7 @@ class _HomeViewState extends State<HomeView> {
             height: MediaQuery.of(context).size.height * 1,
             padding: const EdgeInsets.all(20),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Row(
                   children: [
@@ -112,7 +116,17 @@ class _HomeViewState extends State<HomeView> {
                             fontSize: 10)),
                   ],
                 ),
-                CategoryView()
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    CategoryView(),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [DishesView()],
+                )
               ],
             ),
           ),
