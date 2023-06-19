@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
@@ -92,13 +93,16 @@ class _HomeViewState extends State<HomeView> {
           backgroundColor: kPrimaryColor,
         ),
         body: SingleChildScrollView(
-          child: Container(
-            height: MediaQuery.of(context).size.height * 1,
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Row(
+          reverse: false,
+          dragStartBehavior: DragStartBehavior.down,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                height: MediaQuery.of(context).size.height * 0.05,
+                padding: EdgeInsets.all(12),
+                child: Row(
                   children: [
                     const Text('Menu',
                         style: TextStyle(
@@ -116,19 +120,27 @@ class _HomeViewState extends State<HomeView> {
                             fontSize: 10)),
                   ],
                 ),
-                Row(
+              ),
+              Container(
+                height: MediaQuery.of(context).size.height * 0.1,
+                padding: EdgeInsets.all(12),
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     CategoryView(),
                   ],
                 ),
-                Row(
+              ),
+              Container(
+                // height: MediaQuery.of(context).size.height * 0.17,
+                padding: EdgeInsets.all(12),
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   mainAxisSize: MainAxisSize.max,
                   children: [DishesView()],
-                )
-              ],
-            ),
+                ),
+              )
+            ],
           ),
         ),
         bottomNavigationBar: Container(
