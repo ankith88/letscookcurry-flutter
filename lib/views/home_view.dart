@@ -7,6 +7,9 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:letscookcurry/constants.dart';
 import 'package:letscookcurry/views/category_view.dart';
 import 'package:letscookcurry/views/dishes_view.dart';
+import 'package:letscookcurry/views/favourite_view.dart';
+import 'package:letscookcurry/views/menu_view.dart';
+import 'package:letscookcurry/views/profile_view.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -28,6 +31,13 @@ class _HomeViewState extends State<HomeView> {
   var userInitials = "";
 
   bool _progressController = true;
+  int _selectedIndex = 0;
+
+  static const List<Widget> _widgetOptions = <Widget>[
+    MenuView(),
+    FavouriteView(),
+    ProfileView(),
+  ];
 
   @override
   void initState() {
@@ -104,21 +114,29 @@ class _HomeViewState extends State<HomeView> {
             appBar: AppBar(
               title: const Text("Let Cook Curry"),
               actions: <Widget>[
-                //IconButton
                 IconButton(
-                  icon: const Icon(Icons.logout),
+                  icon: const Icon(Icons.shopping_cart_rounded),
                   tooltip: 'Logout',
                   onPressed: () {
-                    _signOut();
-                    Navigator.of(context)
-                        .pushNamedAndRemoveUntil('/login', (route) => false);
+                    // _signOut();
+                    // Navigator.of(context)
+                    //     .pushNamedAndRemoveUntil('/login', (route) => false);
                   },
                 ), //IconButton
               ],
-              leading: IconButton(
-                icon: const Icon(Icons.menu),
-                tooltip: 'Menu Icon',
-                onPressed: () {},
+              leading: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: CircleAvatar(
+                  backgroundColor: Colors.white,
+                  radius: 10,
+                  child: Text(
+                    userInitials,
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 10,
+                        color: kSecondaryButtonColor),
+                  ),
+                ),
               ), //
               titleSpacing: 00.0,
               centerTitle: true,
@@ -132,54 +150,8 @@ class _HomeViewState extends State<HomeView> {
               elevation: 0.00,
               backgroundColor: kPrimaryColor,
             ),
-            body: SingleChildScrollView(
-              reverse: false,
-              dragStartBehavior: DragStartBehavior.down,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    height: MediaQuery.of(context).size.height * 0.05,
-                    padding: const EdgeInsets.all(12),
-                    child: Row(
-                      children: [
-                        const Text('Menu',
-                            style: TextStyle(
-                                color: kPrimaryTextColor,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18)),
-                        const Spacer(),
-                        Text(
-                            '${findFirstDateOfTheWeek()} to ${findLastDateOfTheWeek()}',
-                            style: const TextStyle(
-                                color: kPrimaryTextColor,
-                                fontWeight: FontWeight.normal,
-                                fontSize: 10)),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    height: MediaQuery.of(context).size.height * 0.1,
-                    padding: const EdgeInsets.all(12),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        CategoryView(),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    // height: MediaQuery.of(context).size.height * 0.17,
-                    padding: const EdgeInsets.all(12),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.max,
-                      children: [DishesView()],
-                    ),
-                  )
-                ],
-              ),
+            body: Center(
+              child: _widgetOptions.elementAt(_selectedIndex)
             ),
             bottomNavigationBar: Container(
                 decoration: BoxDecoration(
@@ -216,20 +188,16 @@ class _HomeViewState extends State<HomeView> {
                           text: 'Likes',
                         ),
                         GButton(
-                          icon: Icons.search,
-                          text: 'Search',
-                        ),
-                        GButton(
                           icon: Icons.person_rounded,
                           text: 'Profile',
                         ),
                       ],
-                      // selectedIndex: _selectedIndex,
-                      // onTabChange: (index) {
-                      //   setState(() {
-                      //     _selectedIndex = index;
-                      //   });
-                      // },
+                      selectedIndex: _selectedIndex,
+                      onTabChange: (index) {
+                        setState(() {
+                          _selectedIndex = index;
+                        });
+                      },
                     ),
                   ),
                 )));
