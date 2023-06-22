@@ -112,7 +112,13 @@ class _HomeViewState extends State<HomeView> {
         : Scaffold(
             resizeToAvoidBottomInset: false,
             appBar: AppBar(
-              title: const Text("Let Cook Curry"),
+              title: const Text(
+                "Let's Cook Curry",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               actions: <Widget>[
                 IconButton(
                   icon: const Icon(Icons.shopping_cart_rounded),
@@ -150,12 +156,23 @@ class _HomeViewState extends State<HomeView> {
               elevation: 0.00,
               backgroundColor: kPrimaryColor,
             ),
-            body: Center(
-              child: _widgetOptions.elementAt(_selectedIndex)
+            body: SingleChildScrollView(
+              child: DecoratedBox(
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                        image: AssetImage("assets/images/bgimg.png"),
+                        fit: BoxFit.fitHeight),
+                  ),
+                  child: SingleChildScrollView(
+                      child: Center(
+                          child: _widgetOptions.elementAt(_selectedIndex)))),
             ),
             bottomNavigationBar: Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
+                  borderRadius: const BorderRadius.only(
+                      topRight: Radius.circular(30),
+                      topLeft: Radius.circular(30)),
                   boxShadow: [
                     BoxShadow(
                       blurRadius: 20,
@@ -166,18 +183,18 @@ class _HomeViewState extends State<HomeView> {
                 child: SafeArea(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 15.0, vertical: 8),
+                        horizontal: 10.0, vertical: 8),
                     child: GNav(
-                      rippleColor: Colors.grey[300]!,
-                      hoverColor: Colors.grey[100]!,
+                      rippleColor: kPrimaryColor,
+                      hoverColor: kPrimaryColor,
                       gap: 8,
                       activeColor: kSecondaryButtonColor,
                       iconSize: 24,
                       padding: const EdgeInsets.symmetric(
                           horizontal: 20, vertical: 12),
                       duration: const Duration(milliseconds: 400),
-                      tabBackgroundColor: Colors.grey[100]!,
-                      color: kPrimaryColor,
+                      tabBackgroundColor: kPrimaryColor,
+                      color: kSecondaryButtonColor,
                       tabs: const [
                         GButton(
                           icon: Icons.home,
