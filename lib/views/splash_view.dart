@@ -16,7 +16,7 @@ class _SplashViewState extends State<SplashView> {
     return AnimatedSplashScreen(
       duration: 1000,
       splash: Image.asset(
-        "assets/images/lcc_logo.png",
+        "assets/images/main_image-v2-2048.jpg",
         // height: (400 / 812.0) * MediaQuery.of(context).size.height,
         // width: (400 / 812.0) * MediaQuery.of(context).size.width,
       ),

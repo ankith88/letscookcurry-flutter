@@ -50,6 +50,9 @@ dependencies:
   google_sign_in: ^6.1.4
   scaled_list: ^2.0.0
   flutter_lorem: ^2.0.0
+  carousel_slider: ^4.2.1
+  card_swiper: ^2.0.4
+  easy_search_bar: ^2.5.0
 
 dev_dependencies:
   flutter_test:

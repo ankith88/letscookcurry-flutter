@@ -1,15 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:letscookcurry/constants.dart';
-import 'package:letscookcurry/views/category_view.dart';
-import 'package:letscookcurry/views/dishes_view.dart';
 import 'package:letscookcurry/views/favourite_view.dart';
 import 'package:letscookcurry/views/menu_view.dart';
 import 'package:letscookcurry/views/profile_view.dart';
+import 'package:letscookcurry/views/search_view.dart';
+
+import '../model/custom_search.dart';
+import '../model/dishes_class.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -30,11 +31,14 @@ class _HomeViewState extends State<HomeView> {
 
   var userInitials = "";
 
+  List<DishesClass> allDishes = [];
+
   bool _progressController = true;
   int _selectedIndex = 0;
 
   static const List<Widget> _widgetOptions = <Widget>[
     MenuView(),
+    SearchView(),
     FavouriteView(),
     ProfileView(),
   ];
@@ -42,8 +46,8 @@ class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
     _currentUser = _auth.currentUser!;
-    print(_currentUser.uid);
     _getUserDetails();
+    getDishes();
 
     super.initState();
   }
@@ -54,7 +58,6 @@ class _HomeViewState extends State<HomeView> {
 
     if (docSnapshot.exists) {
       Map<String, dynamic>? data = docSnapshot.data();
-      print(data);
       userFirstName = data?['firstname'];
       userLastName = data?['lastname'];
       userEmail = data?['email'];
@@ -68,10 +71,37 @@ class _HomeViewState extends State<HomeView> {
       setState(() {
         userInitials = userFirstNameInitial.toUpperCase() +
             userLastNameInitial.toUpperCase();
-        print(userInitials);
         _progressController = false;
       });
     }
+  }
+
+  Future<void> getDishes() async {
+    var dishesData =
+        await FirebaseFirestore.instance.collection('recipes').get();
+
+    dishesData.docs.forEach((result) {
+      var dishName = result.data()['name'];
+      var dishDescription = result.data()['description'];
+      var dishServings = result.data()['servings'];
+      var dishCourse = result.data()['course'];
+      var dishImage = result.data()['image'];
+      var dishCategory = result.data()['category'];
+      var dishPrice = result.data()['price'];
+
+      final newDish = DishesClass(
+          image: dishImage,
+          name: dishName,
+          description: dishDescription,
+          course: dishCourse,
+          servings: dishServings.toString(),
+          price: dishPrice,
+          category: dishCategory);
+      print(newDish.toString());
+      setState(() {
+        allDishes.add(newDish);
+      });
+    });
   }
 
   Future<void> _signOut() async {
@@ -121,6 +151,12 @@ class _HomeViewState extends State<HomeView> {
               ),
               actions: <Widget>[
                 IconButton(
+                    onPressed: () {
+                      showSearch(
+                          context: context, delegate: CustomSearch(allDishes));
+                    },
+                    icon: const Icon(Icons.search_rounded)),
+                IconButton(
                   icon: const Icon(Icons.shopping_cart_rounded),
                   tooltip: 'Logout',
                   onPressed: () {
@@ -156,27 +192,26 @@ class _HomeViewState extends State<HomeView> {
               elevation: 0.00,
               backgroundColor: kPrimaryColor,
             ),
-            body: SingleChildScrollView(
-              child: DecoratedBox(
-                  decoration: const BoxDecoration(
-                    image: DecorationImage(
-                        image: AssetImage("assets/images/bgimg.png"),
-                        fit: BoxFit.fitHeight),
-                  ),
-                  child: SingleChildScrollView(
-                      child: Center(
-                          child: _widgetOptions.elementAt(_selectedIndex)))),
+            body: Container(
+              constraints: BoxConstraints.expand(),
+              decoration: const BoxDecoration(
+                  image: DecorationImage(
+                      image: AssetImage("assets/images/bgimg.png"),
+                      fit: BoxFit.cover)),
+              child: SingleChildScrollView(
+                  child:
+                      Center(child: _widgetOptions.elementAt(_selectedIndex))),
             ),
             bottomNavigationBar: Container(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Colors.white,
-                  borderRadius: const BorderRadius.only(
+                  borderRadius: BorderRadius.only(
                       topRight: Radius.circular(30),
                       topLeft: Radius.circular(30)),
                   boxShadow: [
                     BoxShadow(
-                      blurRadius: 20,
-                      color: Colors.black.withOpacity(.1),
+                      blurRadius: 10,
+                      color: kPrimaryColor,
                     )
                   ],
                 ),
@@ -199,6 +234,10 @@ class _HomeViewState extends State<HomeView> {
                         GButton(
                           icon: Icons.home,
                           text: 'Home',
+                        ),
+                        GButton(
+                          icon: Icons.search_rounded,
+                          text: 'Search',
                         ),
                         GButton(
                           icon: Icons.favorite,
