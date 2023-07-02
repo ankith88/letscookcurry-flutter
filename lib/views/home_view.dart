@@ -7,7 +7,7 @@ import 'package:letscookcurry/constants.dart';
 import 'package:letscookcurry/views/favourite_view.dart';
 import 'package:letscookcurry/views/menu_view.dart';
 import 'package:letscookcurry/views/profile_view.dart';
-import 'package:letscookcurry/views/search_view.dart';
+import 'package:letscookcurry/views/cart_view.dart';
 
 import '../model/custom_search.dart';
 import '../model/dishes_class.dart';
@@ -38,7 +38,7 @@ class _HomeViewState extends State<HomeView> {
 
   static const List<Widget> _widgetOptions = <Widget>[
     MenuView(),
-    SearchView(),
+    CartView(),
     FavouriteView(),
     ProfileView(),
   ];
@@ -80,7 +80,7 @@ class _HomeViewState extends State<HomeView> {
     var dishesData =
         await FirebaseFirestore.instance.collection('recipes').get();
 
-    dishesData.docs.forEach((result) {
+    for (var result in dishesData.docs) {
       var dishName = result.data()['name'];
       var dishDescription = result.data()['description'];
       var dishServings = result.data()['servings'];
@@ -96,12 +96,13 @@ class _HomeViewState extends State<HomeView> {
           course: dishCourse,
           servings: dishServings.toString(),
           price: dishPrice,
-          category: dishCategory);
-      print(newDish.toString());
+          category: dishCategory,
+          collectionid: result.id);
+
       setState(() {
         allDishes.add(newDish);
       });
-    });
+    }
   }
 
   Future<void> _signOut() async {
@@ -156,15 +157,6 @@ class _HomeViewState extends State<HomeView> {
                           context: context, delegate: CustomSearch(allDishes));
                     },
                     icon: const Icon(Icons.search_rounded)),
-                IconButton(
-                  icon: const Icon(Icons.shopping_cart_rounded),
-                  tooltip: 'Logout',
-                  onPressed: () {
-                    // _signOut();
-                    // Navigator.of(context)
-                    //     .pushNamedAndRemoveUntil('/login', (route) => false);
-                  },
-                ), //IconButton
               ],
               leading: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -236,8 +228,8 @@ class _HomeViewState extends State<HomeView> {
                           text: 'Home',
                         ),
                         GButton(
-                          icon: Icons.search_rounded,
-                          text: 'Search',
+                          icon: Icons.shopping_cart_rounded,
+                          text: 'Cart',
                         ),
                         GButton(
                           icon: Icons.favorite,

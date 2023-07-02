@@ -384,6 +384,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.17"
+  input_quantity:
+    dependency: "direct main"
+    description:
+      name: input_quantity
+      sha256: "0860e32e97f5fbf064b746174613639b58e53a641b49d7e6c411b7162cf25275"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.1"
+  intl:
+    dependency: transitive
+    description:
+      name: intl
+      sha256: "910f85bce16fb5c6f614e117efa303e85a1731bb0081edf3604a2ae6e9a3cc91"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.17.0"
   js:
     dependency: transitive
     description:
@@ -480,6 +496,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.7.3"
+  quantity_input:
+    dependency: "direct main"
+    description:
+      name: quantity_input
+      sha256: "69a05b0aacfe83dbd89e0a7ff2819da2170d420aa9652dadb93b539971420e43"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.2"
   quiver:
     dependency: transitive
     description:

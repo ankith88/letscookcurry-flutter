@@ -53,6 +53,8 @@ dependencies:
   carousel_slider: ^4.2.1
   card_swiper: ^2.0.4
   easy_search_bar: ^2.5.0
+  quantity_input: ^1.0.2
+  input_quantity: ^1.2.1
 
 dev_dependencies:
   flutter_test:
