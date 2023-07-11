@@ -23,7 +23,8 @@ class _DishesViewState extends State<DishesView> {
   @override
   void initState() {
     _currentUser = _auth.currentUser!;
-    getDishes();
+    // _getCartItems();
+    _getDishes();
 
     super.initState();
   }
@@ -38,10 +39,35 @@ class _DishesViewState extends State<DishesView> {
     for (var result in collectionCart.docs) {
       var itemQty = result.data()['item_qty'];
       var itemCollectionId = result.data()['recipes_collection_id'];
+
+      // print(itemCollectionId.toString());
+      // print(itemQty);
+
+      var recipeData = await FirebaseFirestore.instance
+          .collection("recipes")
+          .doc(itemCollectionId)
+          .get();
+
+      // print(recipeData.data());
+
+      final newDish = DishesClass(
+          image: recipeData.data()!['image'],
+          name: recipeData.data()!['name'],
+          description: recipeData.data()!['description'],
+          course: recipeData.data()!['course'],
+          servings: recipeData.data()!['servings'].toString(),
+          price: recipeData.data()!['price'],
+          category: recipeData.data()!['category'],
+          collectionid: itemCollectionId);
+      final cartItem = CartClass(
+          dish: newDish, qty: itemQty, recipeCollectionId: itemCollectionId);
+      setState(() {
+        cartItems.add(cartItem);
+      });
     }
   }
 
-  Future<void> getDishes() async {
+  Future<void> _getDishes() async {
     var dishesData =
         await FirebaseFirestore.instance.collection('recipes').get();
 
@@ -63,20 +89,17 @@ class _DishesViewState extends State<DishesView> {
           price: dishPrice,
           category: dishCategory,
           collectionid: result.id);
+
+          
       setState(() {
         allDishes.add(newDish);
       });
     }
+    // _getCartItems();
   }
 
   Future<void> _addItemsToCart(DishesClass items, int qty) async {
-    print('Dish added to cart name: ');
-    print(items.name);
-
-    print('Qty of Dish added to cart: ');
-    print(qty);
-
-    var exitingCartItemUpdate = firestoreInstance
+    firestoreInstance
         .collection("users")
         .doc(_currentUser.uid)
         .collection("cart_items")
@@ -84,7 +107,7 @@ class _DishesViewState extends State<DishesView> {
         .get()
         .then(
       (querySnapshot) {
-        if (querySnapshot.docs.length == 0) {
+        if (querySnapshot.docs.isEmpty) {
           firestoreInstance
               .collection("users")
               .doc(_currentUser.uid)
@@ -93,21 +116,22 @@ class _DishesViewState extends State<DishesView> {
             "recipes_collection_id": items.collectionid,
             "item_qty": qty
           }).then((value) {
-            final cartItem = CartClass(dish: items, qty: qty);
+            final cartItem = CartClass(
+                dish: items, qty: qty, recipeCollectionId: items.collectionid);
             setState(() {
               cartItems.add(cartItem);
             });
           });
         } else {
           for (var docSnapshot in querySnapshot.docs) {
-            print('${docSnapshot.id} => ${docSnapshot.data()}');
             firestoreInstance
                 .collection("users")
                 .doc(_currentUser.uid)
                 .collection("cart_items")
                 .doc(docSnapshot.id)
                 .update({"item_qty": qty});
-            final cartItem = CartClass(dish: items, qty: qty);
+            final cartItem = CartClass(
+                dish: items, qty: qty, recipeCollectionId: docSnapshot.id);
             setState(() {
               cartItems.add(cartItem);
             });
@@ -122,6 +146,8 @@ class _DishesViewState extends State<DishesView> {
 
   @override
   Widget build(BuildContext context) {
+    // print('Dish View Build');
+    // print(allDishes.length);
     return Flexible(
       child: ListView.builder(
           scrollDirection: Axis.vertical,
@@ -129,6 +155,9 @@ class _DishesViewState extends State<DishesView> {
           itemCount: allDishes.length,
           itemBuilder: (context, index) {
             // return Text("$index");
+            print(allDishes[index].collectionid);
+            // print(cartItems.length);
+            // print(cartItems.contains(allDishes[index].collectionid));
             return DishCard(allDishes[index], _addItemsToCart);
           }),
     );

@@ -39,7 +39,6 @@ class _HomeViewState extends State<HomeView> {
   static const List<Widget> _widgetOptions = <Widget>[
     MenuView(),
     CartView(),
-    FavouriteView(),
     ProfileView(),
   ];
 
@@ -102,14 +101,6 @@ class _HomeViewState extends State<HomeView> {
       setState(() {
         allDishes.add(newDish);
       });
-    }
-  }
-
-  Future<void> _signOut() async {
-    try {
-      await FirebaseAuth.instance.signOut();
-    } catch (e) {
-      print(e); // TODO: show dialog with error
     }
   }
 
@@ -230,10 +221,6 @@ class _HomeViewState extends State<HomeView> {
                         GButton(
                           icon: Icons.shopping_cart_rounded,
                           text: 'Cart',
-                        ),
-                        GButton(
-                          icon: Icons.favorite,
-                          text: 'Likes',
                         ),
                         GButton(
                           icon: Icons.person_rounded,

@@ -26,7 +26,7 @@ class CustomSearch extends SearchDelegate {
       "recipes_collection_id": items.collectionid,
       "item_qty": qty
     }).then((value) {
-      final cartItem = CartClass(dish: items, qty: qty);
+      final cartItem = CartClass(dish: items, qty: qty, recipeCollectionId: items.collectionid);
       cartItems.add(cartItem);
     });
   }
