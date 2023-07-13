@@ -23,53 +23,16 @@ class _DishesViewState extends State<DishesView> {
   @override
   void initState() {
     _currentUser = _auth.currentUser!;
-    // _getCartItems();
-    _getDishes();
+    _getDishesAndCartItems();
 
     super.initState();
   }
 
-  Future<void> _getCartItems() async {
-    var collectionCart = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(_currentUser.uid)
-        .collection('cart_items')
-        .get();
-
-    for (var result in collectionCart.docs) {
-      var itemQty = result.data()['item_qty'];
-      var itemCollectionId = result.data()['recipes_collection_id'];
-
-      // print(itemCollectionId.toString());
-      // print(itemQty);
-
-      var recipeData = await FirebaseFirestore.instance
-          .collection("recipes")
-          .doc(itemCollectionId)
-          .get();
-
-      // print(recipeData.data());
-
-      final newDish = DishesClass(
-          image: recipeData.data()!['image'],
-          name: recipeData.data()!['name'],
-          description: recipeData.data()!['description'],
-          course: recipeData.data()!['course'],
-          servings: recipeData.data()!['servings'].toString(),
-          price: recipeData.data()!['price'],
-          category: recipeData.data()!['category'],
-          collectionid: itemCollectionId);
-      final cartItem = CartClass(
-          dish: newDish, qty: itemQty, recipeCollectionId: itemCollectionId);
-      setState(() {
-        cartItems.add(cartItem);
-      });
-    }
-  }
-
-  Future<void> _getDishes() async {
+  Future<void> _getDishesAndCartItems() async {
     var dishesData =
         await FirebaseFirestore.instance.collection('recipes').get();
+
+    List<DishesClass> tempDishToBeStored = [];
 
     for (var result in dishesData.docs) {
       var dishName = result.data()['name'];
@@ -90,12 +53,44 @@ class _DishesViewState extends State<DishesView> {
           category: dishCategory,
           collectionid: result.id);
 
-          
-      setState(() {
-        allDishes.add(newDish);
-      });
+      tempDishToBeStored.add(newDish);
     }
-    // _getCartItems();
+
+    var collectionCart = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(_currentUser.uid)
+        .collection('cart_items')
+        .get();
+
+    List<CartClass> tempCartItemsToBeStored = [];
+
+    for (var result in collectionCart.docs) {
+      var itemQty = result.data()['item_qty'];
+      var itemCollectionId = result.data()['recipes_collection_id'];
+
+      var recipeData = await FirebaseFirestore.instance
+          .collection("recipes")
+          .doc(itemCollectionId)
+          .get();
+
+      final newDish = DishesClass(
+          image: recipeData.data()!['image'],
+          name: recipeData.data()!['name'],
+          description: recipeData.data()!['description'],
+          course: recipeData.data()!['course'],
+          servings: recipeData.data()!['servings'].toString(),
+          price: recipeData.data()!['price'],
+          category: recipeData.data()!['category'],
+          collectionid: itemCollectionId);
+      final cartItem = CartClass(
+          dish: newDish, qty: itemQty, recipeCollectionId: itemCollectionId);
+      tempCartItemsToBeStored.add(cartItem);
+    }
+
+    setState(() {
+      allDishes.addAll(tempDishToBeStored);
+      cartItems.addAll(tempCartItemsToBeStored);
+    });
   }
 
   Future<void> _addItemsToCart(DishesClass items, int qty) async {
@@ -146,19 +141,20 @@ class _DishesViewState extends State<DishesView> {
 
   @override
   Widget build(BuildContext context) {
-    // print('Dish View Build');
-    // print(allDishes.length);
     return Flexible(
       child: ListView.builder(
           scrollDirection: Axis.vertical,
           shrinkWrap: true,
           itemCount: allDishes.length,
           itemBuilder: (context, index) {
-            // return Text("$index");
-            print(allDishes[index].collectionid);
-            // print(cartItems.length);
-            // print(cartItems.contains(allDishes[index].collectionid));
-            return DishCard(allDishes[index], _addItemsToCart);
+            int dishCartQty = 0;
+            for (var x = 0; x < cartItems.length; x++) {
+              if (allDishes[index].collectionid ==
+                  cartItems[x].recipeCollectionId) {
+                dishCartQty = cartItems[x].qty;
+              }
+            }
+            return DishCard(allDishes[index], _addItemsToCart, dishCartQty);
           }),
     );
   }

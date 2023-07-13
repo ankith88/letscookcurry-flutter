@@ -8,7 +8,9 @@ import 'package:letscookcurry/views/favourite_view.dart';
 import 'package:letscookcurry/views/menu_view.dart';
 import 'package:letscookcurry/views/profile_view.dart';
 import 'package:letscookcurry/views/cart_view.dart';
+import 'package:badges/badges.dart' as badges;
 
+import '../model/cart_class.dart';
 import '../model/custom_search.dart';
 import '../model/dishes_class.dart';
 
@@ -32,6 +34,7 @@ class _HomeViewState extends State<HomeView> {
   var userInitials = "";
 
   List<DishesClass> allDishes = [];
+  List<CartClass> cartItems = [];
 
   bool _progressController = true;
   int _selectedIndex = 0;
@@ -46,7 +49,7 @@ class _HomeViewState extends State<HomeView> {
   void initState() {
     _currentUser = _auth.currentUser!;
     _getUserDetails();
-    getDishes();
+    _getDishesAndCartItems();
 
     super.initState();
   }
@@ -75,9 +78,11 @@ class _HomeViewState extends State<HomeView> {
     }
   }
 
-  Future<void> getDishes() async {
+  Future<void> _getDishesAndCartItems() async {
     var dishesData =
         await FirebaseFirestore.instance.collection('recipes').get();
+
+    List<DishesClass> tempDishToBeStored = [];
 
     for (var result in dishesData.docs) {
       var dishName = result.data()['name'];
@@ -98,10 +103,44 @@ class _HomeViewState extends State<HomeView> {
           category: dishCategory,
           collectionid: result.id);
 
-      setState(() {
-        allDishes.add(newDish);
-      });
+      tempDishToBeStored.add(newDish);
     }
+
+    var collectionCart = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(_currentUser.uid)
+        .collection('cart_items')
+        .get();
+
+    List<CartClass> tempCartItemsToBeStored = [];
+
+    for (var result in collectionCart.docs) {
+      var itemQty = result.data()['item_qty'];
+      var itemCollectionId = result.data()['recipes_collection_id'];
+
+      var recipeData = await FirebaseFirestore.instance
+          .collection("recipes")
+          .doc(itemCollectionId)
+          .get();
+
+      final newDish = DishesClass(
+          image: recipeData.data()!['image'],
+          name: recipeData.data()!['name'],
+          description: recipeData.data()!['description'],
+          course: recipeData.data()!['course'],
+          servings: recipeData.data()!['servings'].toString(),
+          price: recipeData.data()!['price'],
+          category: recipeData.data()!['category'],
+          collectionid: itemCollectionId);
+      final cartItem = CartClass(
+          dish: newDish, qty: itemQty, recipeCollectionId: itemCollectionId);
+      tempCartItemsToBeStored.add(cartItem);
+    }
+
+    setState(() {
+      allDishes.addAll(tempDishToBeStored);
+      cartItems.addAll(tempCartItemsToBeStored);
+    });
   }
 
 // Gets the starting date of the current week
@@ -213,16 +252,33 @@ class _HomeViewState extends State<HomeView> {
                       duration: const Duration(milliseconds: 400),
                       tabBackgroundColor: kPrimaryColor,
                       color: kSecondaryButtonColor,
-                      tabs: const [
-                        GButton(
+                      tabs: [
+                        const GButton(
                           icon: Icons.home,
                           text: 'Home',
                         ),
                         GButton(
+                          leading: badges.Badge(
+                            badgeStyle: const badges.BadgeStyle(
+                                badgeColor: Colors.white,
+                                padding: EdgeInsets.all(5)),
+                            badgeContent: Text(
+                              '${cartItems.length}',
+                              style: const TextStyle(
+                                  color: kSecondaryButtonColor,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            child: const Icon(
+                              Icons.shopping_cart_rounded,
+                              color: kSecondaryButtonColor,
+                            ),
+                          ),
                           icon: Icons.shopping_cart_rounded,
+                          gap: 25,
                           text: 'Cart',
                         ),
-                        GButton(
+                        const GButton(
                           icon: Icons.person_rounded,
                           text: 'Profile',
                         ),

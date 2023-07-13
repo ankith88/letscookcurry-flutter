@@ -7,8 +7,9 @@ import 'package:letscookcurry/model/dishes_class.dart';
 class DishCard extends StatefulWidget {
   late final DishesClass _dishes;
   final Function addItem;
+  final int cartQty;
 
-  DishCard(this._dishes, this.addItem);
+  DishCard(this._dishes, this.addItem, this.cartQty);
 
   @override
   State<DishCard> createState() => _DishCardState();
@@ -84,7 +85,7 @@ class _DishCardState extends State<DishCard> {
                 children: [
                   InputQty(
                       maxVal: 5,
-                      initVal: 0,
+                      initVal: widget.cartQty,
                       steps: 1,
                       minVal: 1,
                       showMessageLimit: false,

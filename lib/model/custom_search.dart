@@ -81,7 +81,7 @@ class CustomSearch extends SearchDelegate {
               itemCount: matchQuery.length,
               itemBuilder: (context, index) {
                 // return Text("$index");
-                return DishCard(matchQuery[index], _addItemsToCart);
+                return DishCard(matchQuery[index], _addItemsToCart, 0);
               }),
         ),
       ),
@@ -112,7 +112,7 @@ class CustomSearch extends SearchDelegate {
               itemCount: matchQuery.length,
               itemBuilder: (context, index) {
                 // return Text("$index");
-                return DishCard(matchQuery[index], _addItemsToCart);
+                return DishCard(matchQuery[index], _addItemsToCart, 0);
               }),
         ),
       ),
