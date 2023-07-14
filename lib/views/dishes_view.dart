@@ -7,7 +7,10 @@ import 'package:letscookcurry/model/cart_class.dart';
 import 'package:letscookcurry/model/dishes_class.dart';
 
 class DishesView extends StatefulWidget {
-  const DishesView({super.key});
+  final Function updateCartQty;
+
+  DishesView(this.updateCartQty);
+  // const DishesView({super.key});
 
   @override
   State<DishesView> createState() => _DishesViewState();
@@ -19,6 +22,7 @@ class _DishesViewState extends State<DishesView> {
   final _auth = FirebaseAuth.instance;
   final firestoreInstance = FirebaseFirestore.instance;
   late User _currentUser;
+  int cartQty = 0;
 
   @override
   void initState() {
@@ -26,6 +30,10 @@ class _DishesViewState extends State<DishesView> {
     _getDishesAndCartItems();
 
     super.initState();
+  }
+
+  void submitTx() {
+    widget.updateCartQty(cartQty); // Close the modal
   }
 
   Future<void> _getDishesAndCartItems() async {
@@ -42,18 +50,20 @@ class _DishesViewState extends State<DishesView> {
       var dishImage = result.data()['image'];
       var dishCategory = result.data()['category'];
       var dishPrice = result.data()['price'];
+      var available = result.data()['available'];
 
-      final newDish = DishesClass(
-          image: dishImage,
-          name: dishName,
-          description: dishDescription,
-          course: dishCourse,
-          servings: dishServings.toString(),
-          price: dishPrice,
-          category: dishCategory,
-          collectionid: result.id);
-
-      tempDishToBeStored.add(newDish);
+      if (available == true) {
+        final newDish = DishesClass(
+            image: dishImage,
+            name: dishName,
+            description: dishDescription,
+            course: dishCourse,
+            servings: dishServings.toString(),
+            price: dishPrice,
+            category: dishCategory,
+            collectionid: result.id);
+        tempDishToBeStored.add(newDish);
+      }
     }
 
     var collectionCart = await FirebaseFirestore.instance
@@ -115,6 +125,8 @@ class _DishesViewState extends State<DishesView> {
                 dish: items, qty: qty, recipeCollectionId: items.collectionid);
             setState(() {
               cartItems.add(cartItem);
+              cartQty = cartItems.length;
+              submitTx();
             });
           });
         } else {

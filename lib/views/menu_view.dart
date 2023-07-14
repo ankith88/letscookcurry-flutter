@@ -4,13 +4,22 @@ import 'category_view.dart';
 import 'dishes_view.dart';
 
 class MenuView extends StatefulWidget {
-  const MenuView({super.key});
+  final Function updateCartQty;
 
+  MenuView(this.updateCartQty);
+  // const MenuView({super.key});
   @override
   State<MenuView> createState() => _MenuViewState();
 }
 
 class _MenuViewState extends State<MenuView> {
+  int cartItemsLength = 0;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   // Gets the starting date of the current week
   String findFirstDateOfTheWeek() {
     DateTime now = DateTime.now();
@@ -26,6 +35,19 @@ class _MenuViewState extends State<MenuView> {
     DateTime lastDateCurrentWeek =
         now.add(Duration(days: DateTime.daysPerWeek - now.weekday));
     return "${lastDateCurrentWeek.day.toString().padLeft(2, '0')}/${lastDateCurrentWeek.month.toString().padLeft(2, '0')}/${lastDateCurrentWeek.year.toString()}";
+  }
+
+  void updateCartQuantity(int qty) {
+    print('menu view cart qty');
+    print(qty);
+    setState(() {
+      cartItemsLength = qty;
+      submitTx();
+    });
+  }
+
+  void submitTx() {
+    widget.updateCartQty(cartItemsLength);
   }
 
   @override
@@ -66,10 +88,10 @@ class _MenuViewState extends State<MenuView> {
         Container(
           // height: MediaQuery.of(context).size.height * 0.17,
           padding: const EdgeInsets.all(10),
-          child: const Row(
+          child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             // mainAxisSize: MainAxisSize.max,
-            children: [DishesView()],
+            children: [DishesView(widget.updateCartQty)],
           ),
         ),
       ],

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:letscookcurry/constants.dart';
-import 'package:letscookcurry/views/favourite_view.dart';
 import 'package:letscookcurry/views/menu_view.dart';
 import 'package:letscookcurry/views/profile_view.dart';
 import 'package:letscookcurry/views/cart_view.dart';
@@ -33,17 +32,13 @@ class _HomeViewState extends State<HomeView> {
 
   var userInitials = "";
 
+  int cartItemsLength = 0;
+
   List<DishesClass> allDishes = [];
   List<CartClass> cartItems = [];
 
   bool _progressController = true;
   int _selectedIndex = 0;
-
-  static const List<Widget> _widgetOptions = <Widget>[
-    MenuView(),
-    CartView(),
-    ProfileView(),
-  ];
 
   @override
   void initState() {
@@ -140,6 +135,13 @@ class _HomeViewState extends State<HomeView> {
     setState(() {
       allDishes.addAll(tempDishToBeStored);
       cartItems.addAll(tempCartItemsToBeStored);
+      cartItemsLength = cartItems.length;
+    });
+  }
+
+  void updateCartQuantity(int qty) {
+    setState(() {
+      cartItemsLength = qty;
     });
   }
 
@@ -158,6 +160,19 @@ class _HomeViewState extends State<HomeView> {
     DateTime lastDateCurrentWeek =
         now.add(Duration(days: DateTime.daysPerWeek - now.weekday));
     return "${lastDateCurrentWeek.day.toString().padLeft(2, '0')}/${lastDateCurrentWeek.month.toString().padLeft(2, '0')}/${lastDateCurrentWeek.year.toString()}";
+  }
+
+  StatefulWidget viewDisplay(int index) {
+    switch (index) {
+      case 0:
+        return MenuView(updateCartQuantity);
+      case 1:
+        return CartView(cartItemsLength, updateCartQuantity);
+      case 2:
+        return ProfileView();
+      default:
+        return MenuView(updateCartQuantity);
+    }
   }
 
   @override
@@ -195,7 +210,7 @@ class _HomeViewState extends State<HomeView> {
                   radius: 10,
                   child: Text(
                     userInitials,
-                    style: TextStyle(
+                    style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 10,
                         color: kSecondaryButtonColor),
@@ -215,25 +230,27 @@ class _HomeViewState extends State<HomeView> {
               backgroundColor: kPrimaryColor,
             ),
             body: Container(
-              constraints: BoxConstraints.expand(),
+              constraints: BoxConstraints.expand(
+                  height: MediaQuery.of(context).size.height),
               decoration: const BoxDecoration(
                   image: DecorationImage(
                       image: AssetImage("assets/images/bgimg.png"),
-                      fit: BoxFit.cover)),
+                      fit: BoxFit.fitHeight)),
               child: SingleChildScrollView(
-                  child:
-                      Center(child: _widgetOptions.elementAt(_selectedIndex))),
+                  child: Center(
+                child: viewDisplay(_selectedIndex),
+              )),
             ),
             bottomNavigationBar: Container(
                 decoration: const BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(30),
-                      topLeft: Radius.circular(30)),
+                      topRight: Radius.circular(25),
+                      topLeft: Radius.circular(25)),
                   boxShadow: [
                     BoxShadow(
                       blurRadius: 10,
-                      color: kPrimaryColor,
+                      color: kSecondaryColor,
                     )
                   ],
                 ),
@@ -256,6 +273,9 @@ class _HomeViewState extends State<HomeView> {
                         const GButton(
                           icon: Icons.home,
                           text: 'Home',
+                          textStyle: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: kSecondaryButtonColor),
                         ),
                         GButton(
                           leading: badges.Badge(
@@ -263,9 +283,9 @@ class _HomeViewState extends State<HomeView> {
                                 badgeColor: Colors.white,
                                 padding: EdgeInsets.all(5)),
                             badgeContent: Text(
-                              '${cartItems.length}',
+                              '${cartItemsLength}',
                               style: const TextStyle(
-                                  color: kSecondaryButtonColor,
+                                  color: kSecondaryColor,
                                   fontSize: 15,
                                   fontWeight: FontWeight.bold),
                             ),
@@ -277,10 +297,16 @@ class _HomeViewState extends State<HomeView> {
                           icon: Icons.shopping_cart_rounded,
                           gap: 25,
                           text: 'Cart',
+                          textStyle: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: kSecondaryButtonColor),
                         ),
                         const GButton(
                           icon: Icons.person_rounded,
                           text: 'Profile',
+                          textStyle: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: kSecondaryButtonColor),
                         ),
                       ],
                       selectedIndex: _selectedIndex,

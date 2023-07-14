@@ -18,6 +18,7 @@ class DishCard extends StatefulWidget {
 class _DishCardState extends State<DishCard> {
   int dishQty = 0;
   int simpleIntInput = 1;
+  String errorMessage = '';
 
   @override
   void initState() {
@@ -25,6 +26,11 @@ class _DishCardState extends State<DishCard> {
   }
 
   void submitTx() {
+    dishQty++;
+    widget.addItem(widget._dishes, dishQty); // Close the modal
+  }
+
+  void updateTx() {
     widget.addItem(widget._dishes, dishQty); // Close the modal
   }
 
@@ -33,10 +39,10 @@ class _DishCardState extends State<DishCard> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Card(
-        // color: kPrimaryColor,
+        // color: kSecondaryColor.withOpacity(0.6),
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30),
-            side: const BorderSide(color: kSecondaryButtonColor, width: 0)),
+            side: const BorderSide(color: kSecondaryColor, width: 0)),
         elevation: 10,
         child: Column(
           // crossAxisAlignment: CrossAxisAlignment.center,
@@ -79,38 +85,8 @@ class _DishCardState extends State<DishCard> {
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  InputQty(
-                      maxVal: 5,
-                      initVal: widget.cartQty,
-                      steps: 1,
-                      minVal: 1,
-                      showMessageLimit: false,
-                      borderShape: BorderShapeBtn.circle,
-                      boxDecoration: const BoxDecoration(),
-                      minusBtn: const Icon(Icons.remove, size: 18),
-                      plusBtn: const Icon(
-                        Icons.add,
-                        size: 18,
-                      ),
-                      btnColor1: kSecondaryButtonColor,
-                      btnColor2: kSecondaryButtonColor,
-                      textFieldDecoration: const InputDecoration(
-                          isDense: false,
-                          contentPadding: EdgeInsets.symmetric(horizontal: 25)),
-                      onQtyChanged: (val) {
-                        // if (kDebugMode) {
-                        // print(val);
-                        // setState(() {
-                        dishQty = val as int;
-                        // });
-                      }
-                      // },
-                      ),
-                  ElevatedButton(
+              child: widget.cartQty == 0
+                  ? ElevatedButton(
                       onPressed: () {
                         submitTx();
                       },
@@ -128,22 +104,57 @@ class _DishCardState extends State<DishCard> {
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                             fontSize: MediaQuery.of(context).size.height *
-                                (18 / 812.0)),
+                                (16 / 812.0)),
                       ))
-                ],
-              ),
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        InputQty(
+                            maxVal: 5,
+                            initVal: widget.cartQty,
+                            steps: 1,
+                            minVal: 1,
+                            showMessageLimit: false,
+                            borderShape: BorderShapeBtn.circle,
+                            boxDecoration: const BoxDecoration(),
+                            minusBtn: const Icon(Icons.remove, size: 16),
+                            plusBtn: const Icon(
+                              Icons.add,
+                              size: 16,
+                            ),
+                            btnColor1: kSecondaryButtonColor,
+                            btnColor2: kSecondaryButtonColor,
+                            textFieldDecoration: const InputDecoration(
+                                isDense: false,
+                                contentPadding:
+                                    EdgeInsets.symmetric(horizontal: 20)),
+                            onQtyChanged: (val) {
+                              dishQty = val as int;
+                            }),
+                        ElevatedButton(
+                            onPressed: () {
+                              updateTx();
+                            },
+                            style: TextButton.styleFrom(
+                              backgroundColor: kSecondaryColor,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20)),
+                              // elevation: 5,
+                              animationDuration: const Duration(seconds: 5),
+                            ),
+                            // icon: Icon(Icons.add, size: 18),
+                            child: Text(
+                              'Update cart',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: MediaQuery.of(context).size.height *
+                                      (16 / 812.0)),
+                            ))
+                      ],
+                    ),
             ),
-            // Padding(
-            //   padding: const EdgeInsets.all(10.0),
-            //   child: Center(
-            //     child: ListTile(
-            //         visualDensity: VisualDensity.standard,
-            //         trailing: QuantityInput(
-            //             value: simpleIntInput,
-            //             onChanged: (value) => setState(() => simpleIntInput =
-            //                 int.parse(value.replaceAll(',', ''))))),
-            //   ),
-            // ),
           ],
         ),
       ),

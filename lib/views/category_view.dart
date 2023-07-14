@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 
 import '../components/category_card.dart';
 import '../model/category_class.dart';
-import '../model/dishes_class.dart';
 
 class CategoryView extends StatefulWidget {
   // static const double _cardWidth = 115;
@@ -36,18 +35,21 @@ class _CategoryViewState extends State<CategoryView> {
         await FirebaseFirestore.instance.collection('recipes').get();
 
     dishesData.docs.forEach((result) async {
-      var dishName = result.data()['name'];
-      var dishDescription = result.data()['description'];
-      var dishServings = result.data()['servings'];
-      var dishCourse = result.data()['course'];
-      var dishImage = result.data()['image'];
+      // var dishName = result.data()['name'];
+      // var dishDescription = result.data()['description'];
+      // var dishServings = result.data()['servings'];
+      // var dishCourse = result.data()['course'];
+      // var dishImage = result.data()['image'];
       var dishCategory = result.data()['category'];
-      var dishPrice = result.data()['price'];
+      // var dishPrice = result.data()['price'];
+      var available = result.data()['available'];
 
-      var categoryArray = dishCategory.toString().split('/');
-      var categoryArray2 = categoryArray[1].toString().split(')');
+      if (available == true) {
+        var categoryArray = dishCategory.toString().split('/');
+        var categoryArray2 = categoryArray[1].toString().split(')');
 
-      allCategoriesIds.add(categoryArray2[0]);
+        allCategoriesIds.add(categoryArray2[0]);
+      }
     });
     allCategoriesIds = allCategoriesIds.toSet().toList();
     for (var x = 0; x < allCategoriesIds.length; x++) {
