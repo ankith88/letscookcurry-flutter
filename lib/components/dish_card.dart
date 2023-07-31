@@ -64,14 +64,35 @@ class _DishCardState extends State<DishCard> {
               padding: const EdgeInsets.only(left: 15, right: 15),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    widget._dishes.name,
-                    style: TextStyle(
-                        fontSize:
-                            MediaQuery.of(context).size.height * (18 / 812.0),
-                        fontWeight: FontWeight.bold),
+                  Column(
+                    children: [
+                      Text(
+                        widget._dishes.name,
+                        style: TextStyle(
+                            fontSize: MediaQuery.of(context).size.height *
+                                (18 / 812.0),
+                            fontWeight: FontWeight.bold),
+                      ),
+                      // Text(
+                      //   '\$${widget._dishes.price}',
+                      //   style: TextStyle(
+                      //       fontSize: MediaQuery.of(context).size.height *
+                      //           (18 / 812.0),
+                      //       color: kPrimaryTextColor),
+                      // ),
+                      // Container(
+                      //   width: 150,
+                      //   child: Text(
+                      //     widget._dishes.description,
+                      //     style: TextStyle(
+                      //       fontSize: MediaQuery.of(context).size.height *
+                      //           (12 / 812.0),
+                      //     ),
+                      //   ),
+                      // ),
+                    ],
                   ),
                   Text(
                     '\$${widget._dishes.price}',
@@ -84,7 +105,8 @@ class _DishCardState extends State<DishCard> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding:
+                  const EdgeInsets.only(left: 15, right: 15, top: 8, bottom: 8),
               child: widget.cartQty == 0
                   ? ElevatedButton(
                       onPressed: () {

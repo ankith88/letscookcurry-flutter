@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:letscookcurry/components/cart_card.dart';
 import '../constants.dart';
 import '../model/cart_class.dart';
@@ -128,6 +129,33 @@ class _CartViewState extends State<CartView> {
     // print(exitingCartItemUpdate);
   }
 
+  Future<void> sendEmail() async {
+    final Email email = Email(
+      body: 'Test',
+      subject: 'Test Subject',
+      recipients: ['ankith88@gmail.com'],
+      isHTML: true,
+    );
+
+    String platformResponse;
+
+    try {
+      await FlutterEmailSender.send(email);
+      platformResponse = 'success';
+    } catch (error) {
+      print(error);
+      platformResponse = error.toString();
+    }
+
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(platformResponse),
+      ),
+    );
+  }
+
   void _deleteCartItem(CartClass currentCartItem) {
     firestoreInstance
         .collection("users")
@@ -203,6 +231,7 @@ class _CartViewState extends State<CartView> {
                   ElevatedButton(
                       onPressed: () {
                         // submitTx();
+                        sendEmail();
                       },
                       style: TextButton.styleFrom(
                         backgroundColor: kSecondaryColor,

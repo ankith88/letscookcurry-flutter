@@ -53,7 +53,7 @@ class _MenuViewState extends State<MenuView> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Container(
@@ -86,7 +86,6 @@ class _MenuViewState extends State<MenuView> {
           ),
         ),
         Container(
-          // height: MediaQuery.of(context).size.height * 0.17,
           padding: const EdgeInsets.all(10),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,

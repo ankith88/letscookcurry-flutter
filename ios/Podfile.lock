@@ -719,6 +719,8 @@ PODS:
     - GoogleUtilities/UserDefaults (~> 7.8)
     - PromisesObjC (~> 2.1)
   - Flutter (1.0.0)
+  - flutter_email_sender (0.0.1):
+    - Flutter
   - fluttertoast (0.0.2):
     - Flutter
     - Toast
@@ -848,6 +850,7 @@ DEPENDENCIES:
   - firebase_auth (from `.symlinks/plugins/firebase_auth/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - Flutter (from `Flutter`)
+  - flutter_email_sender (from `.symlinks/plugins/flutter_email_sender/ios`)
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
   - google_sign_in_ios (from `.symlinks/plugins/google_sign_in_ios/ios`)
 
@@ -887,6 +890,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/firebase_core/ios"
   Flutter:
     :path: Flutter
+  flutter_email_sender:
+    :path: ".symlinks/plugins/flutter_email_sender/ios"
   fluttertoast:
     :path: ".symlinks/plugins/fluttertoast/ios"
   google_sign_in_ios:
@@ -909,6 +914,7 @@ SPEC CHECKSUMS:
   FirebaseFirestore: b3bb12a497c9d13e80ec3158dbb75ded03592e8d
   FirebaseInstallations: 2a2c6859354cbec0a228a863d4daf6de7c74ced4
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  flutter_email_sender: 02d7443217d8c41483223627972bfdc09f74276b
   fluttertoast: fafc4fa4d01a6a9e4f772ecd190ffa525e9e2d9c
   google_sign_in_ios: 1256ff9d941db546373826966720b0c24804bcdd
   GoogleAppMeasurement: bbbfd4bcb2b40ae9b772c3b0823a58c1e3d618f9

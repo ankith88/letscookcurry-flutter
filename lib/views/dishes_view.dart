@@ -154,10 +154,21 @@ class _DishesViewState extends State<DishesView> {
   @override
   Widget build(BuildContext context) {
     return Flexible(
+        child: RefreshIndicator(
+      onRefresh: () async {
+        await Future.delayed(const Duration(seconds: 1));
+        setState(() {
+          allDishes = [];
+          cartItems = [];
+          _getDishesAndCartItems();
+        });
+        
+      },
       child: ListView.builder(
           scrollDirection: Axis.vertical,
           shrinkWrap: true,
           itemCount: allDishes.length,
+          // physics: const AlwaysScrollableScrollPhysics(),
           itemBuilder: (context, index) {
             int dishCartQty = 0;
             for (var x = 0; x < cartItems.length; x++) {
@@ -168,6 +179,6 @@ class _DishesViewState extends State<DishesView> {
             }
             return DishCard(allDishes[index], _addItemsToCart, dishCartQty);
           }),
-    );
+    ));
   }
 }

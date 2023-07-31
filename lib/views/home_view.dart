@@ -199,7 +199,7 @@ class _HomeViewState extends State<HomeView> {
                 IconButton(
                     onPressed: () {
                       showSearch(
-                          context: context, delegate: CustomSearch(allDishes));
+                          context: context, delegate: CustomSearch(allDishes, cartItems, updateCartQuantity));
                     },
                     icon: const Icon(Icons.search_rounded)),
               ],
@@ -230,8 +230,7 @@ class _HomeViewState extends State<HomeView> {
               backgroundColor: kPrimaryColor,
             ),
             body: Container(
-              constraints: BoxConstraints.expand(
-                  height: MediaQuery.of(context).size.height),
+              constraints: BoxConstraints.expand(),
               decoration: const BoxDecoration(
                   image: DecorationImage(
                       image: AssetImage("assets/images/bgimg.png"),
